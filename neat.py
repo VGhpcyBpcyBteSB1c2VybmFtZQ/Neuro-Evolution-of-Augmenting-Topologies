@@ -17,13 +17,20 @@ class NEAT:
         self.__population_size = population_size
 
         # ////////////// parameters for the neat algorithm
-        self.__weight_mutation_rate = 0.8
+        self.__weight_mutation_rate = 0.5
         self.__weight_change_rate = 0.1
         self.__node_mutation_rate = 0.03
         self.__connection_mutation_rate = 0.05
         self.__c1 = 1
         self.__c2 = 0.3
-        self.__speciation_threshold = 3.0
+        self.__speciation_threshold = 10.0
+        self.__disable_rate = 0.75
+
+        self.__min_perturb = -0.1
+        self.__max_perturb = 0.1
+
+        self.__min_weight = -7
+        self.__max_weight = 7
         # ////////////////////////////////////////////////
 
         # initializing the population
@@ -63,7 +70,7 @@ class NEAT:
                 for member in self.__population_members[sp]:
                     # create the net and calculate the fitness
                     net = neuralNet.NeuralNetwork(member[1])
-                    member[0] = fitnessEvaluator(net)  # / len(self.__population_members[sp])
+                    member[0] = fitnessEvaluator(net) / len(self.__population_members[sp])
                     population += 1
 
                 # sort the members by fitness
@@ -71,8 +78,8 @@ class NEAT:
                 highestFitness = self.__population_members[sp][0][0]
 
                 # for tracking the overall highest fitness
-                if (highestFitness > overallHighestFitness):
-                    overallHighestFitness = highestFitness
+                if (highestFitness * len(self.__population_members[sp]) > overallHighestFitness):
+                    overallHighestFitness = highestFitness * len(self.__population_members[sp])
                     bestNetwork = neuralNet.NeuralNetwork(self.__population_members[sp][0][1])
 
                 # delete the bottom 50% of the species if it has more than 2 members
@@ -98,7 +105,7 @@ class NEAT:
             # create the new generation by randomly breeding members within each species
             for sp in self.__population_members:
                 # create total members of species proportional to its total fitness
-                for total in range(0, math.floor(fitness_species[sp] / totalOverallFitness * self.__population_size)):
+                for total in range(0, round((fitness_species[sp] / totalOverallFitness) * (self.__population_size - len(self.__population_members)))):
                     r = random.random() * fitness_species[sp]
                     temp = 0
                     p1 = None   # parent 1
@@ -117,12 +124,15 @@ class NEAT:
                             if (r <= temp):
                                 p2 = member
                                 break
-
                     # create the child and append it
                     if (p1[0] > p2[0]):
-                        tempMembers.append(genome.crossover(p1[1], p2[1], self.__weight_mutation_rate, self.__weight_change_rate, self.__node_mutation_rate, self.__connection_mutation_rate))
+                        tempMembers.append(genome.crossover(p1[1], p2[1], self.__weight_mutation_rate, self.__weight_change_rate,
+                                           self.__node_mutation_rate, self.__connection_mutation_rate, self.__disable_rate, self.__min_perturb,
+                                           self.__max_perturb, self.__min_weight, self.__max_weight))
                     else:
-                        tempMembers.append(genome.crossover(p2[1], p1[1], self.__weight_mutation_rate, self.__weight_change_rate, self.__node_mutation_rate, self.__connection_mutation_rate))
+                        tempMembers.append(genome.crossover(p2[1], p1[1], self.__weight_mutation_rate, self.__weight_change_rate,
+                                           self.__node_mutation_rate, self.__connection_mutation_rate, self.__disable_rate, self.__min_perturb,
+                                           self.__max_perturb, self.__min_weight, self.__max_weight))
 
             # put the children into their respective species
             for member in tempMembers:

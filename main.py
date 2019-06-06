@@ -1,5 +1,6 @@
 import genome
 import neat
+import random
 
 
 def myEval(network):
@@ -18,9 +19,9 @@ node1 = genome.NodeGene(0)
 node2 = genome.NodeGene(0)
 node3 = genome.NodeGene(2)
 
-con1 = genome.ConnectionGene(0, 3, -1.6)
-con2 = genome.ConnectionGene(1, 3, 0.9)
-con3 = genome.ConnectionGene(2, 3, 0.2)
+con1 = genome.ConnectionGene(0, 3, random.uniform(-4, 4))
+con2 = genome.ConnectionGene(1, 3, random.uniform(-4, 4))
+con3 = genome.ConnectionGene(2, 3, random.uniform(-4, 4))
 
 newGen1 = genome.Genome()
 
@@ -33,7 +34,7 @@ newGen1.addConnectionGene(con2, "1_3")
 newGen1.addConnectionGene(con3, "2_3")
 
 Algo = neat.NEAT(newGen1, 20)
-network = Algo.evaluate(myEval, 60)
+network = Algo.evaluate(myEval, 2000)
 
 for i in range(0, 1):
     print("\n0, 0 =", network.feedForward([0, 0, 1])[0])

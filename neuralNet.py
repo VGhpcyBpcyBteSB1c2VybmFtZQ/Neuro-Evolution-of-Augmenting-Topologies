@@ -18,7 +18,12 @@ class NeuralNetwork:
         # storing the connection dictionary for later use
         self.__connDict = genome.getConnectionGenesDict()
         # storing sorted keys for connections for later use
-        self.__sortedKeys = sorted(list(self.__connDict.keys()))
+        self.__sortedKeys = []
+        for member in self.__connDict.values():
+            self.__sortedKeys.append(member)
+        self.__sortedKeys.sort(key=self.__sortKey)
+        for i in range(0, len(self.__sortedKeys)):
+            self.__sortedKeys[i] = str(self.__sortedKeys[i].getInput()) + "_" + str(self.__sortedKeys[i].getOutput())
 
         # print("Nodes:", len(nodesList), "Connections: ", len(self.__connDict))
 
@@ -27,13 +32,17 @@ class NeuralNetwork:
         print("Nodes:", len(self.__nodesResults))
         for key in self.__sortedKeys:
             print(key, self.__connDict[key].getWeight(), self.__connDict[key].isExpressed())
-        print(self.__connDict)
+
+    # key provider to sort the nodesList
+    def __sortKey(self, val):
+        return val.getInput()
 
     def __activationFunction(self, val):
-        if (val < 0):
-            return 1 - (1 / (1 + math.exp(4.9 * val)))
-        else:
-            return 1 / (1 + math.exp(-4.9 * val))
+        return math.tanh(val)
+        # if (val < 0):
+        #     return 1 - (1 / (1 + math.exp(4.9 * val)))
+        # else:
+        #     return 1 / (1 + math.exp(-4.9 * val))
 
     def feedForward(self, inputs):
         # put the input values into the corresponding nodes

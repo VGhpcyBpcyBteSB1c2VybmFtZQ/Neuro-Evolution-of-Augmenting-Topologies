@@ -73,7 +73,8 @@ class Genome:
 
 
 # function for crossing over two genomes, the first parent is assumed to have higher fitness
-def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_mutation_rate, connection_mutation_rate):
+def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_mutation_rate, connection_mutation_rate,
+              disable_rate, min_perturb, max_perturb, min_weight, max_weight):
     random.seed()
     newGenome = Genome()
 
@@ -98,9 +99,9 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
         if (prob <= weight_mutation_rate):
             prob = random.random()
             if (prob <= weight_change_rate):
-                conGene.setWeight(random.uniform(-2, 2))
+                conGene.setWeight(random.uniform(min_weight, max_weight))
             else:
-                conGene.setWeight(conGene.getWeight() * random.uniform(-2, 2))
+                conGene.setWeight(conGene.getWeight() + random.uniform(min_perturb, max_perturb))
 
         # disabling a gene if it is disabled in either of the parents 75% of the times
         if (i in genome1.getConnectionGenesDict() and (not genome1.getConnectionGenesDict()[i].isExpressed())):
@@ -110,8 +111,8 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
         else:
             disabled = False
         if (disabled):
-            prob = random.randint(1, 100)
-            if (prob <= 75):
+            prob = random.random()
+            if (prob <= disable_rate):
                 conGene.disable()
             else:
                 conGene.enable()
@@ -150,7 +151,7 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
                     if (nodeList[start].getType() != 2 or nodeList[end].getType() != 2):
                         inno = str(start) + "_" + str(end)
                         if(inno not in newGenome.getConnectionGenesDict()):
-                            mutantCon = ConnectionGene(start, end, random.uniform(-2, 2))
+                            mutantCon = ConnectionGene(start, end, random.uniform(min_weight, max_weight))
                             newGenome.addConnectionGene(mutantCon, inno)
                             break
 
