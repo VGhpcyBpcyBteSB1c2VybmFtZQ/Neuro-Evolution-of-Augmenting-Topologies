@@ -26,11 +26,6 @@ class NEAT:
         self.__speciation_threshold = 3.0
         # ////////////////////////////////////////////////
 
-        # stores the number of generations a specie has stayed stagnant
-        # stores in following format
-        # {specieID : [highestFitness, numberOfGenerations]}
-        self.__specieFitnessStagnation = {self.__global_specieCounter: [0, 0]}
-
         # initializing the population
         # stored in the following format
         # {specieID1 : [[fitness1, genome1], [fitness2, genome2]], specieID2 : ...}
@@ -48,8 +43,6 @@ class NEAT:
         return val[0]
 
     def evaluate(self, fitnessEvaluator, generations):
-        sterilized = []  # stores the species not allowed to reproduce
-
         for gen in range(0, generations):
 
             newGen = {}  # to store the next generation temporarily alongside their species
@@ -59,7 +52,6 @@ class NEAT:
             overallHighestFitness = 0
 
             # loop through each of the species to calculate fitnesses, sort accordingly
-            # and remove stagnant species
             for sp in self.__population_members:
                 # to store the fitness sum total of the species
                 fitnessSumTotal = 0
@@ -69,7 +61,7 @@ class NEAT:
                     net = neuralNet.NeuralNetwork(member[1])
                     member[0] = fitnessEvaluator(net) / len(self.__population_members[sp])
 
-                # sort the members by fitness and check for stagnation
+                # sort the members by fitness
                 self.__population_members[sp].sort(key=self.__sortKey, reverse=True)
                 highestFitness = self.__population_members[sp][0][0]
 
@@ -77,28 +69,14 @@ class NEAT:
                 if (highestFitness > overallHighestFitness):
                     overallHighestFitness = highestFitness
 
-                if (highestFitness <= self.__specieFitnessStagnation[sp][0]):
-                    self.__specieFitnessStagnation[sp][1] += 1
-                else:
-                    self.__specieFitnessStagnation[sp][0] = highestFitness
-                    self.__specieFitnessStagnation[sp][1] = 0
+                # delete the bottom 50% of the species if it has more than 2 members
+                size = len(self.__population_members[sp])
+                if (size > 2):
+                    for i in range(size - 1, math.floor(size / 2) - 1, -1):
+                        del self.__population_members[sp][i]
 
-                # if species has been stagnant for >= 15 generations, then add it to sterilized list and add as is to
-                # the next generation
-                if (self.__specieFitnessStagnation[sp][1] >= 15):
-                    sterilized.append(sp)
-                    newGen[sp] = []
-                    for i in range(0, len(self.__population_members[sp])):
-                        newGen[sp].append([0, copy.deepcopy(self.__population_members[sp][i][1])])
-                else:
-                    # delete the bottom 50% of the species if it has more than 2 members
-                    size = len(self.__population_members[sp])
-                    if (size > 2):
-                        for i in range(size - 1, math.floor(size / 2) - 1, -1):
-                            del self.__population_members[sp][i]
-
-                    # add the best member of the species into the new generation as is
-                    newGen[sp] = [[0, copy.deepcopy(self.__population_members[sp][0][1])]]
+                # add the best member of the species into the new generation as is
+                newGen[sp] = [[0, copy.deepcopy(self.__population_members[sp][0][1])]]
 
             # calculating the total fitness of each species and the generation
 
@@ -113,9 +91,6 @@ class NEAT:
 
             # create the new generation by randomly breeding members within each species
             for sp in self.__population_members:
-                # skip if species is sterile
-                if sp in sterilized:
-                    continue
                 # create total members of species proportional to its total fitness
                 for total in range(0, math.floor(fitness_species[sp] / totalOverallFitness * self.__population_size)):
                     r = random.random() * fitness_species[sp]
@@ -156,7 +131,6 @@ class NEAT:
                 if (not isAdded):  # if offspring does not belong to any species then create a new species
                     newID = self.__getNewSpecieID()
                     newGen[newID] = [[0, member]]
-                    self.__specieFitnessStagnation[newID] = [0, 0]
 
             print("Generation:", gen + 1, "Species:", len(self.__population_members), ", Highest Fitness:", overallHighestFitness)
             del self.__population_members
