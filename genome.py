@@ -145,13 +145,14 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
             nodeList = newGenome.getNodeGenesList()
             start = random.randrange(0, len(nodeList))
             end = random.randrange(0, len(nodeList))
-            if (start != end and (nodeList[start].getType() != 2) and (start < end) and (nodeList[start] != 0 or nodeList[end] != 0) and (nodeList[start] != 2 or nodeList[end] != 2)):
-                inno = str(start) + "_" + str(end)
-                if(inno not in newGenome.getConnectionGenesDict()):
-                    mutantCon = ConnectionGene(start, end, random.uniform(-2, 2))
-                    newGenome.addConnectionGene(mutantCon, inno)
-                    # print("inno", inno)
-                    break
+            if (start != end and (nodeList[start].getType() != 2) and (start < end)):
+                if (nodeList[start].getType() != 0 or nodeList[end].getType() != 0):
+                    if (nodeList[start].getType() != 2 or nodeList[end].getType() != 2):
+                        inno = str(start) + "_" + str(end)
+                        if(inno not in newGenome.getConnectionGenesDict()):
+                            mutantCon = ConnectionGene(start, end, random.uniform(-2, 2))
+                            newGenome.addConnectionGene(mutantCon, inno)
+                            break
 
     return copy.deepcopy(newGenome)
 
@@ -159,10 +160,12 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
 # function to calculate the genetic distance between two genomes
 def geneticDistance(genome1, genome2, c1, c2):
     g1_p1 = genome1.getConnectionGenesDict()
-    g1_p2 = genome1.getNodeGenesList()
-
     g2_p1 = genome2.getConnectionGenesDict()
-    g2_p2 = genome2.getNodeGenesList()
+
+    if (len(g1_p1) > len(g2_p1)):
+        N = len(g1_p1)
+    else:
+        N = len(g2_p1)
 
     total_disjoint_genes = 0
     average_weight_difference = 0
@@ -179,7 +182,6 @@ def geneticDistance(genome1, genome2, c1, c2):
         if inno not in g1_p1:
             total_disjoint_genes += 1
 
-    total_disjoint_genes += abs(len(g1_p2) - len(g2_p2))
     average_weight_difference /= total_common_connections
 
-    return (c1 * total_disjoint_genes) + (c2 * average_weight_difference)
+    return (c1 * (total_disjoint_genes / N)) + (c2 * average_weight_difference)

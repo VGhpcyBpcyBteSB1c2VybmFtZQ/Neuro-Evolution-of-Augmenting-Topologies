@@ -21,7 +21,10 @@ class NeuralNetwork:
         self.__sortedKeys = sorted(list(self.__connDict.keys()))
 
     def __activationFunction(self, val):
-        return 1 / (1 + math.exp(-4.9 * val))
+        if (val < 0):
+            return 1 - (1 / (1 + math.exp(4.9 * val)))
+        else:
+            return 1 / (1 + math.exp(-4.9 * val))
 
     def feedForward(self, inputs):
         # put the input values into the corresponding nodes

@@ -8,7 +8,9 @@ def myEval(network):
     e3 = abs(network.feedForward([1, 0])[0] - 0)
     e4 = abs(network.feedForward([1, 1])[0] - 1)
 
-    return (1 / (1 + e1 + e2 + e3 + e4))
+    avg_err = (e1 + e2 + e3 + e4) / 4
+
+    return (1 / (1 + avg_err))
 
 
 node1 = genome.NodeGene(0)
@@ -27,5 +29,5 @@ newGen1.addNodeGene(node3)
 newGen1.addConnectionGene(con1, "0_2")
 newGen1.addConnectionGene(con2, "1_2")
 
-Algo = neat.NEAT(newGen1, 65)
-Algo.evaluate(myEval, 100)
+Algo = neat.NEAT(newGen1, 10)
+Algo.evaluate(myEval, 1000)

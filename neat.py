@@ -19,8 +19,8 @@ class NEAT:
         # ////////////// parameters for the neat algorithm
         self.__weight_mutation_rate = 0.8
         self.__weight_change_rate = 0.1
-        self.__node_mutation_rate = 0.03
-        self.__connection_mutation_rate = 0.05
+        self.__node_mutation_rate = 0.3
+        self.__connection_mutation_rate = 0.5
         self.__c1 = 1
         self.__c2 = 0.3
         self.__speciation_threshold = 3.0
@@ -50,6 +50,7 @@ class NEAT:
             totalOverallFitness = 0  # to store overal total fitness of the entire generation
             fitness_species = {}  # to store the total fitness of each species
             overallHighestFitness = 0
+            population = 0  # to store the total population the generation
 
             # loop through each of the species to calculate fitnesses, sort accordingly
             for sp in self.__population_members:
@@ -60,6 +61,7 @@ class NEAT:
                     # create the net and calculate the fitness
                     net = neuralNet.NeuralNetwork(member[1])
                     member[0] = fitnessEvaluator(net) / len(self.__population_members[sp])
+                    population += 1
 
                 # sort the members by fitness
                 self.__population_members[sp].sort(key=self.__sortKey, reverse=True)
@@ -100,8 +102,8 @@ class NEAT:
                     for member in self.__population_members[sp]:  # randomly choose parent 1
                         temp += member[0]
                         if (r <= temp):
-                            p1 = member[1]
-                            p2 = member[1]
+                            p1 = member
+                            p2 = member
 
                     while(p1 == p2 and len(self.__population_members[sp]) > 1):
                         r = random.random() * fitness_species[sp]
@@ -109,11 +111,14 @@ class NEAT:
                         for member in self.__population_members[sp]:  # randomly choose parent 2
                             temp += member[0]
                             if (r <= temp):
-                                p2 = member[1]
+                                p2 = member
                                 break
 
                     # create the child and append it
-                    tempMembers.append(genome.crossover(p1, p2, self.__weight_mutation_rate, self.__weight_change_rate, self.__node_mutation_rate, self.__connection_mutation_rate))
+                    if (p1[0] > p2[0]):
+                        tempMembers.append(genome.crossover(p1[1], p2[1], self.__weight_mutation_rate, self.__weight_change_rate, self.__node_mutation_rate, self.__connection_mutation_rate))
+                    else:
+                        tempMembers.append(genome.crossover(p2[1], p1[1], self.__weight_mutation_rate, self.__weight_change_rate, self.__node_mutation_rate, self.__connection_mutation_rate))
 
             # put the children into their respective species
             for member in tempMembers:
@@ -132,6 +137,6 @@ class NEAT:
                     newID = self.__getNewSpecieID()
                     newGen[newID] = [[0, member]]
 
-            print("Generation:", gen + 1, "Species:", len(self.__population_members), ", Highest Fitness:", overallHighestFitness)
+            print("Generation:", gen + 1, "\tSpecies:", len(self.__population_members), "\tHighestFitness:", overallHighestFitness, "\tPopulation:", population)
             del self.__population_members
             self.__population_members = copy.deepcopy(newGen)
