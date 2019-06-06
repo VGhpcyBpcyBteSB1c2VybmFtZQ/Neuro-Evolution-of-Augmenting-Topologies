@@ -3,6 +3,30 @@ import neuralNet
 import random
 import genome
 import math
+import threading
+import msvcrt
+
+gl_Gen = None
+gl_Species = None
+gl_HighestFitness = None
+gl_Population = None
+gl_Done = False
+
+
+def thread_console_writer():
+    global gl_Gen
+    global gl_Species
+    global gl_HighestFitness
+    global gl_Population
+    global gl_Done
+
+    old = None
+    while (True):
+        if (old != gl_Gen):
+            print("Generation:", gl_Gen + 1, "\tSpecies:", gl_Species, "\tHighestFitness:", gl_HighestFitness, "\tPopulation:", gl_Population)
+            old = gl_Gen
+        if (gl_Done):
+            return
 
 
 class Specie:
@@ -17,7 +41,7 @@ class NEAT:
         self.__population_size = population_size
 
         # ////////////// parameters for the neat algorithm
-        self.__weight_mutation_rate = 0.5
+        self.__weight_mutation_rate = 0.8
         self.__weight_change_rate = 0.1
         self.__node_mutation_rate = 0.03
         self.__connection_mutation_rate = 0.05
@@ -49,11 +73,25 @@ class NEAT:
     def __sortKey(self, val):
         return val[0]
 
-    def evaluate(self, fitnessEvaluator, generations):
+    def evaluate(self, fitnessEvaluator, targetFitness=None):
+
+        # /////////////////// Threaded writer ////////////////////
+        global gl_Gen
+        global gl_Species
+        global gl_HighestFitness
+        global gl_Population
+        global gl_Done
+        gl_Done = False
+
+        writer = threading.Thread(target=thread_console_writer, args=())
+        writer.start()
+        # ////////////////////////////////////////////////////////
 
         bestNetwork = None
+        gen = -1
 
-        for gen in range(0, generations):
+        while(True):
+            gen += 1
 
             newGen = {}  # to store the next generation temporarily alongside their species
             tempMembers = []  # to store the next generation temporarily before it is classified into species
@@ -151,7 +189,16 @@ class NEAT:
                     newID = self.__getNewSpecieID()
                     newGen[newID] = [[0, member]]
 
-            print("Generation:", gen + 1, "\tSpecies:", len(self.__population_members), "\tHighestFitness:", overallHighestFitness, "\tPopulation:", population)
+            gl_Gen = gen + 1
+            gl_Species = len(self.__population_members)
+            gl_HighestFitness = overallHighestFitness
+            gl_Population = population
+
+            if (overallHighestFitness >= targetFitness or msvcrt.kbhit()):
+                gl_Done = True
+                writer.join()
+                break
+
             del self.__population_members
             self.__population_members = copy.deepcopy(newGen)
 

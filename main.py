@@ -1,6 +1,7 @@
 import genome
 import neat
 import random
+import os
 
 
 def myEval(network):
@@ -34,7 +35,7 @@ newGen1.addConnectionGene(con2, "1_3")
 newGen1.addConnectionGene(con3, "2_3")
 
 Algo = neat.NEAT(newGen1, 20)
-network = Algo.evaluate(myEval, 2000)
+network = Algo.evaluate(myEval, 14.5)
 
 for i in range(0, 1):
     print("\n0, 0 =", network.feedForward([0, 0, 1])[0])
@@ -43,3 +44,5 @@ for i in range(0, 1):
     print("1, 1 =", network.feedForward([1, 1, 1])[0])
 
 network.printNetwork()
+
+os.system("pause>nul")
