@@ -167,6 +167,9 @@ def geneticDistance(genome1, genome2, c1, c2):
     else:
         N = len(g2_p1)
 
+    if (N < 20):
+        N = 1
+
     total_disjoint_genes = 0
     average_weight_difference = 0
     total_common_connections = 0
@@ -183,5 +186,4 @@ def geneticDistance(genome1, genome2, c1, c2):
             total_disjoint_genes += 1
 
     average_weight_difference /= total_common_connections
-
     return (c1 * (total_disjoint_genes / N)) + (c2 * average_weight_difference)

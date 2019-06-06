@@ -19,8 +19,8 @@ class NEAT:
         # ////////////// parameters for the neat algorithm
         self.__weight_mutation_rate = 0.8
         self.__weight_change_rate = 0.1
-        self.__node_mutation_rate = 0.3
-        self.__connection_mutation_rate = 0.5
+        self.__node_mutation_rate = 0.03
+        self.__connection_mutation_rate = 0.05
         self.__c1 = 1
         self.__c2 = 0.3
         self.__speciation_threshold = 3.0
@@ -43,6 +43,9 @@ class NEAT:
         return val[0]
 
     def evaluate(self, fitnessEvaluator, generations):
+
+        bestNetwork = None
+
         for gen in range(0, generations):
 
             newGen = {}  # to store the next generation temporarily alongside their species
@@ -50,7 +53,7 @@ class NEAT:
             totalOverallFitness = 0  # to store overal total fitness of the entire generation
             fitness_species = {}  # to store the total fitness of each species
             overallHighestFitness = 0
-            population = 0  # to store the total population the generation
+            population = 0  # to store the total population of the generation
 
             # loop through each of the species to calculate fitnesses, sort accordingly
             for sp in self.__population_members:
@@ -60,7 +63,7 @@ class NEAT:
                 for member in self.__population_members[sp]:
                     # create the net and calculate the fitness
                     net = neuralNet.NeuralNetwork(member[1])
-                    member[0] = fitnessEvaluator(net) / len(self.__population_members[sp])
+                    member[0] = fitnessEvaluator(net)  # / len(self.__population_members[sp])
                     population += 1
 
                 # sort the members by fitness
@@ -70,6 +73,7 @@ class NEAT:
                 # for tracking the overall highest fitness
                 if (highestFitness > overallHighestFitness):
                     overallHighestFitness = highestFitness
+                    bestNetwork = neuralNet.NeuralNetwork(self.__population_members[sp][0][1])
 
                 # delete the bottom 50% of the species if it has more than 2 members
                 size = len(self.__population_members[sp])
@@ -140,3 +144,5 @@ class NEAT:
             print("Generation:", gen + 1, "\tSpecies:", len(self.__population_members), "\tHighestFitness:", overallHighestFitness, "\tPopulation:", population)
             del self.__population_members
             self.__population_members = copy.deepcopy(newGen)
+
+        return copy.deepcopy(bestNetwork)

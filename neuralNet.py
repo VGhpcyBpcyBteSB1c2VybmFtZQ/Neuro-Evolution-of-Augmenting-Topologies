@@ -20,6 +20,15 @@ class NeuralNetwork:
         # storing sorted keys for connections for later use
         self.__sortedKeys = sorted(list(self.__connDict.keys()))
 
+        # print("Nodes:", len(nodesList), "Connections: ", len(self.__connDict))
+
+    def printNetwork(self):
+        print("\n")
+        print("Nodes:", len(self.__nodesResults))
+        for key in self.__sortedKeys:
+            print(key, self.__connDict[key].getWeight(), self.__connDict[key].isExpressed())
+        print(self.__connDict)
+
     def __activationFunction(self, val):
         if (val < 0):
             return 1 - (1 / (1 + math.exp(4.9 * val)))
