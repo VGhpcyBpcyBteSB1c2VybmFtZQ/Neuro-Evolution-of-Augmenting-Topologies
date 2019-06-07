@@ -79,20 +79,23 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
     newGenome = Genome()
 
     # add all the node genes from the parent with the higher fitness
-    for node in genome1.getNodeGenesList():
+    nodesGenome = genome1.getNodeGenesList()
+    for node in nodesGenome:
         newGenome.addNodeGene(node)
 
-    for i in genome1.getConnectionGenesDict():
-        if (i in genome2.getConnectionGenesDict()):
+    connectionsGenome1 = genome1.getConnectionGenesDict()
+    connectionsGenome2 = genome2.getConnectionGenesDict()
+    for i in connectionsGenome1:
+        if (i in connectionsGenome2):
             # choosing a random gene from either of the parents
             prob = random.randint(1, 2)
             if (prob == 1):
-                conGene = genome1.getConnectionGenesDict()[i]
+                conGene = connectionsGenome1[i]
             else:
-                conGene = genome2.getConnectionGenesDict()[i]
+                conGene = connectionsGenome2[i]
         else:
             # choose the gene from the highest fitness parent
-            conGene = genome1.getConnectionGenesDict()[i]
+            conGene = connectionsGenome1[i]
 
         # mutating the weight (replacing it or perturbing it)
         prob = random.random()
@@ -104,9 +107,9 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
                 conGene.setWeight(conGene.getWeight() + random.uniform(min_perturb, max_perturb))
 
         # disabling a gene if it is disabled in either of the parents 75% of the times
-        if (i in genome1.getConnectionGenesDict() and (not genome1.getConnectionGenesDict()[i].isExpressed())):
+        if (i in connectionsGenome1 and (not connectionsGenome1[i].isExpressed())):
             disabled = True
-        elif (i in genome2.getConnectionGenesDict() and (not genome2.getConnectionGenesDict()[i].isExpressed())):
+        elif (i in connectionsGenome2 and (not connectionsGenome2[i].isExpressed())):
             disabled = True
         else:
             disabled = False
@@ -130,28 +133,33 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
             nodeGene = NodeGene(1)
 
             newGenome.addNodeGene(nodeGene)
+            # print("Adding inno1 into newGenome")
             newGenome.addConnectionGene(conGene1, newInnovation1)
             # print("newInnovation1", newInnovation1)
+            # print("Adding inno2 into newGenome:", newInnovation1, newInnovation2)
             newGenome.addConnectionGene(conGene2, newInnovation2)
             # print("newInnovation2", newInnovation2)
 
         # print("i", i)
+        # print("Adding conGene into newGenome")
         newGenome.addConnectionGene(conGene, i)  # adding the gene into the child
 
     # mutating by creating a previously absent connection
     prob = random.random()
     if (prob <= connection_mutation_rate):
         # try choosing a random connection following number of times and quit if can't find it
-        for f in range(0, len(newGenome.getConnectionGenesDict())):
-            nodeList = newGenome.getNodeGenesList()
+        connectionsNewGenome = newGenome.getConnectionGenesDict()
+        nodeList = newGenome.getNodeGenesList()
+        for f in range(0, len(connectionsNewGenome)):
             start = random.randrange(0, len(nodeList))
             end = random.randrange(0, len(nodeList))
             if (start != end and (nodeList[start].getType() != 2) and (start < end)):
                 if (nodeList[start].getType() != 0 or nodeList[end].getType() != 0):
                     if (nodeList[start].getType() != 2 or nodeList[end].getType() != 2):
                         inno = str(start) + "_" + str(end)
-                        if(inno not in newGenome.getConnectionGenesDict()):
+                        if(inno not in connectionsNewGenome):
                             mutantCon = ConnectionGene(start, end, random.uniform(min_weight, max_weight))
+                            #print("Adding absent conn into newGenome")
                             newGenome.addConnectionGene(mutantCon, inno)
                             break
 
