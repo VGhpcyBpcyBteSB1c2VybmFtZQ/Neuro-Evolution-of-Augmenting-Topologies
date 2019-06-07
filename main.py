@@ -35,7 +35,7 @@ newGen1.addConnectionGene(con2, "1_3")
 newGen1.addConnectionGene(con3, "2_3")
 
 Algo = neat.NEAT(newGen1, 20)
-network = Algo.evaluate(myEval, 14.5)
+network = Algo.evaluate(myEval, 16)
 
 for i in range(0, 1):
     print("\n0, 0 =", network.feedForward([0, 0, 1])[0])
