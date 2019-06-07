@@ -43,7 +43,7 @@ class NEAT:
         # ////////////// parameters for the neat algorithm
         self.__weight_mutation_rate = 0.8  # probability of a weight getting mutated (replaced or preturbed)
         self.__weight_change_rate = 0.1    # prob of weight getting replaced after decision for mutation (remaining prob for preturbation)
-        self.__node_mutation_rate = 0.008   # prob of a connection being split in half by adding a new node
+        self.__node_mutation_rate = 0.005   # prob of a connection being split in half by adding a new node
         self.__connection_mutation_rate = 0.01   # prob of a new connection being made in a child genome
         self.__c1 = 1                           # contribution of disjoint genes in genetic distance
         self.__c2 = 0                        # contribution of average weight difference in genetic distance
@@ -125,7 +125,7 @@ class NEAT:
                 # delete a certain %age of the bottom of the species if it has more than 3 members
                 size = len(self.__population_members[sp])
                 if (size > 3):
-                    for i in range(size - 1, math.floor(size * self.__bottom_ratio) - 1, -1):
+                    for i in range(size - 1, math.floor(size * (1 - self.__bottom_ratio)) - 1, -1):
                         del self.__population_members[sp][i]
 
                 # add the best member of the species into the new generation as is
