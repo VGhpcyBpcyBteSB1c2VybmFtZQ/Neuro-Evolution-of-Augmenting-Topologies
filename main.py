@@ -5,14 +5,23 @@ import os
 
 
 def myEval(network):
-    e1 = abs(network.feedForward([0, 0, 1])[0] - 0.0)
-    e2 = abs(network.feedForward([0, 1, 1])[0] - 1.0)
-    e3 = abs(network.feedForward([1, 0, 1])[0] - 1.0)
-    e4 = abs(network.feedForward([1, 1, 1])[0] - 0.0)
+
+    ans1 = network.feedForward([0, 0, 1])[0]
+    ans2 = network.feedForward([0, 1, 1])[0]
+    ans3 = network.feedForward([1, 0, 1])[0]
+    ans4 = network.feedForward([1, 1, 1])[0]
+
+    e1 = abs(ans1 - (-1.0))
+    e2 = abs(ans2 - 1.0)
+    e3 = abs(ans3 - 1.0)
+    e4 = abs(ans4 - (-1.0))
 
     avg_err = (e1 + e2 + e3 + e4)
 
-    return (4 - avg_err)**2
+    if (ans1 < 0 and ans2 > 0 and ans3 > 0 and ans4 < 0):
+        return 8
+    else:
+        return (8 / (1 + avg_err))
 
 
 node0 = genome.NodeGene(0)
@@ -35,7 +44,7 @@ newGen1.addConnectionGene(con2, "1_3")
 newGen1.addConnectionGene(con3, "2_3")
 
 Algo = neat.NEAT(newGen1, 1000)
-network = Algo.evaluate(myEval, 15)
+network = Algo.evaluate(myEval, 8)
 
 for i in range(0, 1):
     print("\n0, 0 =", network.feedForward([0, 0, 1])[0])

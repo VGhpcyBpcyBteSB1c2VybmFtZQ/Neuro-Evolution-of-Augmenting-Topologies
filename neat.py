@@ -39,8 +39,8 @@ class NEAT:
         self.__disable_rate = 0.75             # prob of gene being disabled if it is disabled in either of the parents
         self.__bottom_ratio = 0            # the bottom %age of every species that is wiped out in each generation
 
-        self.__min_perturb = -0.1         # max and min perturbation amounts
-        self.__max_perturb = 0.1
+        self.__min_perturb = -2         # max and min perturbation amounts
+        self.__max_perturb = 2
 
         self.__min_weight = -7           # max and min weight amounts to be assigned to new and mutant connections
         self.__max_weight = 7
@@ -57,7 +57,7 @@ class NEAT:
     def __sortKey(self, val):
         return val[0]
 
-    def evaluate(self, fitnessEvaluator, targetFitness=None):
+    def evaluate(self, fitnessEvaluator, targetFitness):
 
         # /////////////////// Threaded writer ////////////////////
         global gl_Gen
