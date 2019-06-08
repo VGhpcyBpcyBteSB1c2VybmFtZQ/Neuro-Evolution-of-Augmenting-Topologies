@@ -13,8 +13,8 @@ class NeuralNetwork:
                 self.__outputNodesList.append(i)
             elif (nodesList[i].getType() == 1):
                 break
-        # to store the results of each of the nodes during calculation
-        self.__nodesResults = [0] * len(nodesList)
+        # to store the total number of nodes
+        self.__totalNodes = len(nodesList)
         # storing the connection dictionary for later use
         self.__connDict = genome.getConnectionGenesDict()
         # storing sorted keys for connections for later use
@@ -29,7 +29,7 @@ class NeuralNetwork:
 
     def printNetwork(self):
         print("\n")
-        print("Nodes:", len(self.__nodesResults))
+        print("Nodes:", self.__totalNodes)
         for key in self.__sortedKeys:
             print(key, self.__connDict[key].getWeight(), self.__connDict[key].isExpressed())
 
@@ -46,8 +46,9 @@ class NeuralNetwork:
 
     def feedForward(self, inputs):
         # put the input values into the corresponding nodes
+        nodesResults = [0] * self.__totalNodes
         for i in range(0, len(inputs)):
-            self.__nodesResults[i] = inputs[i]
+            nodesResults[i] = inputs[i]
 
         # start the feed forward
         for key in self.__sortedKeys:
@@ -58,19 +59,15 @@ class NeuralNetwork:
             out = self.__connDict[key].getOutput()
             # apply the activation on the incoming value only if it is not an input node
             if (inp >= len(inputs)):
-                temp = self.__activationFunction(self.__nodesResults[inp])
+                temp = self.__activationFunction(nodesResults[inp])
             else:
-                temp = self.__nodesResults[inp]
-            self.__nodesResults[out] += temp * self.__connDict[key].getWeight()
+                temp = nodesResults[inp]
+            nodesResults[out] += temp * self.__connDict[key].getWeight()
 
         final_vals = []
         # iterate over the output nodes and append to result
         # after applying the activation function
         for i in self.__outputNodesList:
-            final_vals.append(self.__activationFunction(self.__nodesResults[i]))
+            final_vals.append(self.__activationFunction(nodesResults[i]))
 
-        # reset the output values of all the nodes
-        for i in range(0, len(self.__nodesResults)):
-            self.__nodesResults[i] = 0
-
-        return copy.deepcopy(final_vals)
+        return final_vals
