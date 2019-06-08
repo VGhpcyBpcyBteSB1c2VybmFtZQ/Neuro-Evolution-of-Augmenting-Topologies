@@ -98,6 +98,7 @@ class NEAT:
             size = len(self.__population_members)
             if (size > 3):
                 for i in range(size - 1, math.floor(size * (1 - self.__bottom_ratio)) - 1, -1):
+                    totalGenerationFitness -= self.__population_members[i][0]
                     del self.__population_members[i]
 
             # add the best member into the new generation as is
