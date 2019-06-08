@@ -35,7 +35,7 @@ class NEAT:
         self.__weight_mutation_rate = 0.8  # probability of a weight getting mutated (replaced or preturbed)
         self.__weight_change_rate = 0.1    # prob of weight getting replaced after decision for mutation (remaining prob for preturbation)
         self.__node_mutation_rate = 0.005   # prob of a connection being split in half by adding a new node
-        self.__connection_mutation_rate = 0.008   # prob of a new connection being made in a child genome
+        self.__connection_mutation_rate = 0.3   # prob of a new connection being made in a child genome
         self.__disable_rate = 0.75             # prob of gene being disabled if it is disabled in either of the parents
         self.__bottom_ratio = 0            # the bottom %age of every species that is wiped out in each generation
 

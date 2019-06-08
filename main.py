@@ -19,9 +19,9 @@ def myEval(network):
     avg_err = (e1 + e2 + e3 + e4)
 
     if (ans1 < 0 and ans2 > 0 and ans3 > 0 and ans4 < 0):
-        return 8
+        return 100
     else:
-        return (8 / (1 + avg_err))
+        return (8 - avg_err)
 
 
 node0 = genome.NodeGene(0)
@@ -43,7 +43,7 @@ newGen1.addConnectionGene(con1, "0_3")
 newGen1.addConnectionGene(con2, "1_3")
 newGen1.addConnectionGene(con3, "2_3")
 
-Algo = neat.NEAT(newGen1, 1000)
+Algo = neat.NEAT(newGen1, 150)
 network = Algo.evaluate(myEval, 8)
 
 for i in range(0, 1):
