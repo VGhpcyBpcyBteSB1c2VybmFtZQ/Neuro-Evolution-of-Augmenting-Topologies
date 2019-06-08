@@ -5,25 +5,21 @@ import genome
 import math
 import threading
 import msvcrt
+import queue
 
-gl_Gen = None
-gl_HighestFitness = None
-gl_Population = None
+gen_info = queue.Queue(10)
 gl_Done = False
 
 
 def thread_console_writer():
-    global gl_Gen
-    global gl_HighestFitness
-    global gl_Population
+    global gen_info
     global gl_Done
 
-    old = None
     while (True):
-        if (old != gl_Gen):
-            print("Generation:", gl_Gen + 1, "\tHighestFitness:", gl_HighestFitness, "\tPopulation:", gl_Population)
-            old = gl_Gen
-        if (gl_Done):
+        if (not gen_info.empty()):
+            genArr = gen_info.get()
+            print("Generation:", genArr[0] + 1, "\tHighestFitness:", genArr[1], "\tPopulation:", genArr[2])
+        if (gl_Done and gen_info.empty() is True):
             return
 
 
@@ -60,10 +56,8 @@ class NEAT:
     def evaluate(self, fitnessEvaluator, targetFitness):
 
         # /////////////////// Threaded writer ////////////////////
-        global gl_Gen
-        global gl_HighestFitness
-        global gl_Population
         global gl_Done
+        global gen_info
         gl_Done = False
 
         writer = threading.Thread(target=thread_console_writer, args=())
@@ -136,9 +130,12 @@ class NEAT:
                                        self.__node_mutation_rate, self.__connection_mutation_rate, self.__disable_rate, self.__min_perturb,
                                        self.__max_perturb, self.__min_weight, self.__max_weight)])
 
-            gl_Gen = gen + 1
-            gl_HighestFitness = overallHighestFitness
-            gl_Population = population
+            genArr = []
+            genArr.append(gen)
+            genArr.append(overallHighestFitness)
+            genArr.append(population)
+
+            gen_info.put(genArr)
 
             if (overallHighestFitness >= targetFitness or msvcrt.kbhit()):
                 gl_Done = True
