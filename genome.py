@@ -150,7 +150,7 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
         # try choosing a random connection following number of times and quit if can't find it
         connectionsNewGenome = newGenome.getConnectionGenesDict()
         nodeList = newGenome.getNodeGenesList()
-        for f in range(0, len(connectionsNewGenome)):
+        for f in range(0, len(nodeList)):
             start = random.randrange(0, len(nodeList))
             end = random.randrange(0, len(nodeList))
             if (start != end and (nodeList[start].getType() != 2) and (start < end)):
@@ -159,7 +159,7 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
                         inno = str(start) + "_" + str(end)
                         if(inno not in connectionsNewGenome):
                             mutantCon = ConnectionGene(start, end, random.uniform(min_weight, max_weight))
-                            #print("Adding absent conn into newGenome")
+                            # print("Adding absent conn into newGenome")
                             newGenome.addConnectionGene(mutantCon, inno)
                             break
 
