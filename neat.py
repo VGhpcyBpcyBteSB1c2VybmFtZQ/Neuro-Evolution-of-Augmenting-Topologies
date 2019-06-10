@@ -6,6 +6,7 @@ import math
 import threading
 import msvcrt
 import queue
+import os
 
 gen_info = queue.Queue(10)
 gl_Done = False
@@ -18,6 +19,7 @@ def thread_console_writer():
     while (True):
         if (not gen_info.empty()):
             genArr = gen_info.get()
+            os.system('cls')
             print("Generation:", genArr[0] + 1, "\tHighestFitness:", genArr[1], "\tPopulation:", genArr[2])
         if (gl_Done and gen_info.empty() is True):
             return

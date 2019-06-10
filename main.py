@@ -18,7 +18,7 @@ def myEval(network):
 
     avg_err = (e1 + e2 + e3 + e4)
 
-    if (ans1 < 0 and ans2 > 0 and ans3 > 0 and ans4 < 0):
+    if (ans1 <= 0 and ans2 > 0 and ans3 > 0 and ans4 <= 0):
         return 100
     else:
         return (8 - avg_err)
@@ -54,4 +54,4 @@ for i in range(0, 1):
 
 network.printNetwork()
 
-os.system("pause>nul")
+os.system("pause")
