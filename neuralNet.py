@@ -39,18 +39,22 @@ class NeuralNetwork:
 
     def __activationFunction(self, val, id):
         if (id == 0):
-            return math.tanh(val)
+            return math.tanh(val)      # sigmoid (-1, 1)
         elif (id == 1):
-            return math.sin(val)
+            return math.sin(val)       # sine (-1, 1)
         elif (id == 2):
-            if (val > 1):
+            if (val > 1):              # linear bounded (-1, 1)
                 return 1
             elif (val < -1):
                 return -1
             else:
                 return val
         elif (id == 3):
-            return (math.exp(-(val * val) / (2 * 0.3 * 0.3)))
+            return (math.exp(-(val * val) / (2 * 0.3 * 0.3)))   # Gaussian (0, 1)
+        elif (id == 4):
+            return (math.exp(-(val * val) / (2 * 4)))   # Gaussian (flatter) (0, 1)
+        elif (id == 5):
+            return (math.sin(val) + 1) / 2             # sine (0, 1)
         else:
             sys.exit("Activation id out of range\n")
 

@@ -4,9 +4,8 @@ import random
 import os
 from PIL import Image
 import numpy
-import math
 
-maxActivations = 4
+maxActivations = 6
 
 
 def myEval(network):
@@ -23,7 +22,7 @@ def myEval(network):
 
     avg_err = (e1 + e2 + e3 + e4)
 
-    if (ans1 <= 0 and ans2 > 0 and ans3 > 0 and ans4 <= 0 and False):
+    if (ans1 < 0.5 and ans2 >= 0.5 and ans3 >= 0.5 and ans4 < 0.5):
         return 100
     else:
         return (6 - avg_err)

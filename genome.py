@@ -2,7 +2,7 @@ import sys
 import random
 import copy
 
-maxActivations = 4
+maxActivations = 6
 
 # NodeGene: used to represent the node of the neural net, has an id and a type
 # type 0 = input
