@@ -114,7 +114,7 @@ class NEAT:
                         p2 = member
                         break
 
-                while(p1 == p2 and len(self.__population_members) > 1):
+                while(p1 == p2 and len(self.__population_members) > 1 and totalGenerationFitness > 0):
                     r = random.random() * totalGenerationFitness
                     temp = 0
                     for member in self.__population_members:  # randomly choose parent 2
