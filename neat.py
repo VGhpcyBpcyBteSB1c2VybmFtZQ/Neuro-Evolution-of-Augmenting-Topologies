@@ -90,12 +90,12 @@ class NEAT:
             overallHighestFitness = self.__population_members[0][0]
             bestNetwork = neuralNet.NeuralNetwork(self.__population_members[0][1])
 
-            # delete a certain %age of the bottom of the species if it has more than 3 members
+            # delete a certain %age of the bottom of the species
             size = len(self.__population_members)
-            if (size > 3):
-                for i in range(size - 1, math.floor(size * (1 - self.__bottom_ratio)) - 1, -1):
-                    totalGenerationFitness -= self.__population_members[i][0]
-                    del self.__population_members[i]
+            members = math.floor(size * self.__bottom_ratio)
+            for i in range(size - 1, size - members - 1, -1):
+                totalGenerationFitness -= self.__population_members[i][0]
+                del self.__population_members[i]
 
             # add the best member into the new generation as is
             tempMembers = [self.__population_members[0]]
