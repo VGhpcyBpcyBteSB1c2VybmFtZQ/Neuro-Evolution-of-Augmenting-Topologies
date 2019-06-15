@@ -36,7 +36,7 @@ class NEAT:
         self.__connection_mutation_rate = 0.3   # prob of a new connection being made in a child genome
         self.__disable_rate = 0.75             # prob of gene being disabled if it is disabled in either of the parents
         self.__bottom_ratio = 0            # the bottom %age of every species that is wiped out in each generation
-        self.__activation_mutation = 0.03   # probability of a node having its activation function replaced
+        self.__activation_mutation = 0.3   # probability of a node having its activation function replaced
 
         self.__min_perturb = -2         # max and min perturbation amounts
         self.__max_perturb = 2
