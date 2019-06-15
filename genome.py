@@ -2,6 +2,8 @@ import sys
 import random
 import copy
 
+maxActivations = 4
+
 # NodeGene: used to represent the node of the neural net, has an id and a type
 # type 0 = input
 # type 1 = hiden
@@ -9,11 +11,18 @@ import copy
 
 
 class NodeGene:
-    def __init__(self, type):
+    def __init__(self, type, activation):
         self.__type = type
+        self.__activation = activation
 
     def getType(self):
         return self.__type
+
+    def getActivation(self):
+        return self.__activation
+
+    def setActivation(self, activation):
+        self.__activation = activation
 
     def setType(self, type):
         self.__type = type
@@ -74,13 +83,16 @@ class Genome:
 
 # function for crossing over two genomes, the first parent is assumed to have higher fitness
 def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_mutation_rate, connection_mutation_rate,
-              disable_rate, min_perturb, max_perturb, min_weight, max_weight):
+              disable_rate, min_perturb, max_perturb, min_weight, max_weight, activation_mutation_rate):
     random.seed()
     newGenome = Genome()
 
     # add all the node genes from the parent with the higher fitness
     nodesGenome = genome1.getNodeGenesList()
     for node in nodesGenome:
+        prob = random.random()
+        if (prob <= activation_mutation_rate):
+            node.setActivation(random.randint(0, maxActivations - 1))
         newGenome.addNodeGene(node)
 
     connectionsGenome1 = genome1.getConnectionGenesDict()
@@ -124,13 +136,14 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
         prob = random.random()
         if (prob <= node_mutation_rate):
             conGene.disable()
-            newInnovation1 = str(conGene.getInput()) + "_" + str(len(newGenome.getNodeGenesList()))
-            newInnovation2 = str(len(newGenome.getNodeGenesList())) + "_" + str(conGene.getOutput())
+            newNodeID = len(newGenome.getNodeGenesList())
+            newInnovation1 = str(conGene.getInput()) + "_" + str(newNodeID)
+            newInnovation2 = str(newNodeID) + "_" + str(conGene.getOutput())
 
-            conGene1 = ConnectionGene(conGene.getInput(), len(newGenome.getNodeGenesList()), conGene.getWeight())
-            conGene2 = ConnectionGene(len(newGenome.getNodeGenesList()), conGene.getOutput(), 1)
+            conGene1 = ConnectionGene(conGene.getInput(), newNodeID, conGene.getWeight())
+            conGene2 = ConnectionGene(newNodeID, conGene.getOutput(), 1)
 
-            nodeGene = NodeGene(1)
+            nodeGene = NodeGene(1, random.randint(0, maxActivations - 1))
 
             newGenome.addNodeGene(nodeGene)
             # print("Adding inno1 into newGenome")
@@ -150,7 +163,7 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
         # try choosing a random connection following number of times and quit if can't find it
         connectionsNewGenome = newGenome.getConnectionGenesDict()
         nodeList = newGenome.getNodeGenesList()
-        for f in range(0, len(connectionsNewGenome)):
+        for f in range(0, len(nodeList)):
             start = random.randrange(0, len(nodeList))
             end = random.randrange(0, len(nodeList))
             if (start != end and (nodeList[start].getType() != 2) and (start < end)):
@@ -159,7 +172,7 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
                         inno = str(start) + "_" + str(end)
                         if(inno not in connectionsNewGenome):
                             mutantCon = ConnectionGene(start, end, random.uniform(min_weight, max_weight))
-                            #print("Adding absent conn into newGenome")
+                            # print("Adding absent conn into newGenome")
                             newGenome.addConnectionGene(mutantCon, inno)
                             break
 
