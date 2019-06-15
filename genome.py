@@ -124,11 +124,12 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
         prob = random.random()
         if (prob <= node_mutation_rate):
             conGene.disable()
-            newInnovation1 = str(conGene.getInput()) + "_" + str(len(newGenome.getNodeGenesList()))
-            newInnovation2 = str(len(newGenome.getNodeGenesList())) + "_" + str(conGene.getOutput())
+            newNodeID = len(newGenome.getNodeGenesList())
+            newInnovation1 = str(conGene.getInput()) + "_" + str(newNodeID)
+            newInnovation2 = str(newNodeID) + "_" + str(conGene.getOutput())
 
-            conGene1 = ConnectionGene(conGene.getInput(), len(newGenome.getNodeGenesList()), conGene.getWeight())
-            conGene2 = ConnectionGene(len(newGenome.getNodeGenesList()), conGene.getOutput(), 1)
+            conGene1 = ConnectionGene(conGene.getInput(), newNodeID, conGene.getWeight())
+            conGene2 = ConnectionGene(newNodeID, conGene.getOutput(), 1)
 
             nodeGene = NodeGene(1)
 
