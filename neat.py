@@ -36,7 +36,7 @@ class NEAT:
         self.__connection_mutation_rate = 0.3   # prob of a new connection being made in a child genome
         self.__disable_rate = 0.75             # prob of gene being disabled if it is disabled in either of the parents
         self.__bottom_ratio = 0            # the bottom %age of every species that is wiped out in each generation
-        self.__activation_mutation = 0.03   # probability of a node having its activation function replaced
+        self.__activation_mutation = 0.3   # probability of a node having its activation function replaced
 
         self.__min_perturb = -2         # max and min perturbation amounts
         self.__max_perturb = 2
@@ -82,7 +82,8 @@ class NEAT:
             # loop through each member to calculate fitnesses, sort accordingly
             for member in self.__population_members:
                 net = neuralNet.NeuralNetwork(member[1])
-                member[0] = fitnessEvaluator(net)
+                tempFitness = fitnessEvaluator(net)
+                member[0] = tempFitness[0]
                 population += 1
                 totalGenerationFitness += member[0]
 
@@ -102,29 +103,35 @@ class NEAT:
             tempMembers = [self.__population_members[0]]
 
             # create the new generation by randomly breeding members within each species
-            for iterator in range(0, self.__population_size - 1):
-                r = random.random() * totalGenerationFitness
-                temp = 0
-                p1 = None   # parent 1
-                p2 = None   # parent 2
-                for member in self.__population_members:  # randomly choose parent 1
-                    temp += member[0]
-                    if (r <= temp):
-                        p1 = member
-                        p2 = member
-                        break
 
-                while(p1 == p2 and len(self.__population_members) > 1 and totalGenerationFitness > 0):
-                    r = random.random() * totalGenerationFitness
-                    temp = 0
-                    for member in self.__population_members:  # randomly choose parent 2
-                        temp += member[0]
-                        if (r <= temp):
-                            p2 = member
-                            break
+            tempFitness[1].show()
+            interact = input("Which parents to select: ")
+            p1 = self.__population_members[int(interact[0])]
+            p2 = self.__population_members[int(interact[1])]
+
+            for iterator in range(0, self.__population_size - 1):
+                # r = random.random() * totalGenerationFitness
+                # temp = 0
+                # p1 = None   # parent 1
+                # p2 = None   # parent 2
+                # for member in self.__population_members:  # randomly choose parent 1
+                #     temp += member[0]
+                #     if (r <= temp):
+                #         p1 = member
+                #         p2 = member
+                #         break
+
+                # while(p1 == p2 and len(self.__population_members) > 1 and totalGenerationFitness > 0):
+                #     r = random.random() * totalGenerationFitness
+                #     temp = 0
+                #     for member in self.__population_members:  # randomly choose parent 2
+                #         temp += member[0]
+                #         if (r <= temp):
+                #             p2 = member
+                #             break
 
                 # create the child and append it
-                if (p1[0] > p2[0]):
+                if (True):
                     tempMembers.append([0, genome.crossover(p1[1], p2[1], self.__weight_mutation_rate, self.__weight_change_rate,
                                        self.__node_mutation_rate, self.__connection_mutation_rate, self.__disable_rate, self.__min_perturb,
                                        self.__max_perturb, self.__min_weight, self.__max_weight, self.__activation_mutation)])

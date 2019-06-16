@@ -92,7 +92,7 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
     nodesGenome = genome1.getNodeGenesList()
     for node in nodesGenome:
         prob = random.random()
-        if (prob <= activation_mutation_rate):
+        if (prob <= activation_mutation_rate and node.getType() != 2):
             node.setActivation(random.randint(0, maxActivations - 1))
         newGenome.addNodeGene(node)
 
