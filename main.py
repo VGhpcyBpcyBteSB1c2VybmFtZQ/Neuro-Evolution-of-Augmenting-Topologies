@@ -25,7 +25,7 @@ def myEval(network):
             inp1 = (x / (res - 1) * 2 - 1)
             inp2 = (y / (res - 1) * 2 - 1)
             d = math.sqrt((inp1)**2 + (inp2)**2)
-            testOutput = abs(network.feedForward([inp1, inp2, d, math.sin(10 * inp1), math.cos(10 * inp2), 1])[0]) * 255
+            testOutput = abs(network.feedForward([inp1, inp2, d, math.sin(10 * inp1), math.sin(10 * inp2), 1])[0]) * 255
             collage[res * itery + y, res * iterx + x] = testOutput
 
     iterx += 1
