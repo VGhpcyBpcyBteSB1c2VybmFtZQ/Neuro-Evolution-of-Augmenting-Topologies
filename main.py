@@ -4,8 +4,9 @@ import random
 import os
 from PIL import Image
 import numpy
+import neuralNet
 
-maxActivations = 6
+maxActivations = len(neuralNet.activationList)
 
 
 def myEval(network):
