@@ -91,10 +91,17 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
     # add all the node genes from the parent with the higher fitness
     nodesGenome = genome1.getNodeGenesList()
 
-    mutateActivation = -1        # for applying activation mutation to a random node
+    totalInputNodes = 0                  # counting total input nodes
+    for node in nodesGenome:
+        if (node.getType() == 0):
+            totalInputNodes += 1
+        else:
+            break
+
+    mutateActivation = -1        # for applying activation mutation to a random node (apart from the input nodes)
     prob = random.random()
     if (prob <= activation_mutation_rate):
-        mutateActivation = random.randrange(0, len(nodesGenome))
+        mutateActivation = random.randrange(totalInputNodes, len(nodesGenome))
 
     currentNodeIndex = 0
     for node in nodesGenome:
