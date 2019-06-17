@@ -90,14 +90,29 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
 
     # add all the node genes from the parent with the higher fitness
     nodesGenome = genome1.getNodeGenesList()
+
+    mutateActivation = -1        # for applying activation mutation to a random node
+    prob = random.random()
+    if (prob <= activation_mutation_rate):
+        mutateActivation = random.randrange(0, len(nodesGenome))
+
+    currentNodeIndex = 0
     for node in nodesGenome:
         prob = random.random()
-        if (prob <= activation_mutation_rate):
+        if (mutateActivation == currentNodeIndex):
             node.setActivation(random.randint(0, maxActivations - 1))
         newGenome.addNodeGene(node)
+        currentNodeIndex += 1
 
     connectionsGenome1 = genome1.getConnectionGenesDict()
     connectionsGenome2 = genome2.getConnectionGenesDict()
+
+    mutateAddNode = -1           # for applying addNode mutation to a random connection
+    prob = random.random()
+    if (prob <= node_mutation_rate):
+        mutateAddNode = random.randrange(0, len(connectionsGenome1))
+
+    currentConnectionIndex = 0
     for i in connectionsGenome1:
         if (i in connectionsGenome2):
             # choosing a random gene from either of the parents
@@ -119,7 +134,7 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
             else:
                 conGene.setWeight(conGene.getWeight() + random.uniform(min_perturb, max_perturb))
 
-        # disabling a gene if it is disabled in either of the parents 75% of the times
+        # disabling a gene if it is disabled in either of the parents 75% of the time
         if (i in connectionsGenome1 and (not connectionsGenome1[i].isExpressed())):
             disabled = True
         elif (i in connectionsGenome2 and (not connectionsGenome2[i].isExpressed())):
@@ -134,8 +149,7 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
                 conGene.enable()
 
         # mutating the connection by adding a new node and splitting it
-        prob = random.random()
-        if (prob <= node_mutation_rate):
+        if (currentConnectionIndex == mutateAddNode):
             conGene.disable()
             newNodeID = len(newGenome.getNodeGenesList())
             newInnovation1 = str(conGene.getInput()) + "_" + str(newNodeID)
@@ -157,6 +171,7 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
         # print("i", i)
         # print("Adding conGene into newGenome")
         newGenome.addConnectionGene(conGene, i)  # adding the gene into the child
+        currentConnectionIndex += 1
 
     # mutating by creating a previously absent connection
     prob = random.random()

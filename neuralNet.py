@@ -9,6 +9,10 @@ def sigmoid(val):
     return math.tanh(val)
 
 
+def sigmoidBounded(val):
+    return (math.tanh(val) + 1) / 2
+
+
 def sine(val):
     return math.sin(val)
 
@@ -16,8 +20,17 @@ def sine(val):
 def linearBounded(val):
     if (val > 1):
         return 1
-    elif (val < -1):
-        return -1
+    elif (val < 0):
+        return 0
+    else:
+        return val
+
+
+def step(val):
+    if (val > 0):
+        return 1
+    elif (val < 0):
+        return 0
     else:
         return val
 
@@ -42,7 +55,7 @@ def cosineBounded(val):
     return (math.cos(val) + 1) / 2
 
 
-activationList = [sigmoid, sine, linearBounded, gaussian, gaussianFlatter, sineBounded, cosine, cosineBounded]
+activationList = [sigmoidBounded, sineBounded, linearBounded, step, gaussianFlatter]
 
 # //////////////////////////////////////////////////////////////////////////////////
 
