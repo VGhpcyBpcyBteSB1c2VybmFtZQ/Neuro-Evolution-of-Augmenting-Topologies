@@ -116,7 +116,7 @@ def crossover(genome1, genome2, weight_mutation_rate, weight_change_rate, node_m
 
     mutateAddNode = -1           # for applying addNode mutation to a random connection
     prob = random.random()
-    if (prob <= node_mutation_rate):
+    if (prob <= node_mutation_rate and len(connectionsGenome1) > 0):
         mutateAddNode = random.randrange(0, len(connectionsGenome1))
 
     currentConnectionIndex = 0

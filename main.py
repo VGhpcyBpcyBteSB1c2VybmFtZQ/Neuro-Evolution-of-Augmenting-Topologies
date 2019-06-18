@@ -44,9 +44,9 @@ newGen1.addNodeGene(node0)
 newGen1.addNodeGene(node1)
 newGen1.addNodeGene(node2)
 newGen1.addNodeGene(node3)
-newGen1.addConnectionGene(con1, "0_3")
-newGen1.addConnectionGene(con2, "1_3")
-newGen1.addConnectionGene(con3, "2_3")
+# newGen1.addConnectionGene(con1, "0_3")
+# newGen1.addConnectionGene(con2, "1_3")
+# newGen1.addConnectionGene(con3, "2_3")
 
 
 Algo = neat.NEAT(newGen1, 150)
