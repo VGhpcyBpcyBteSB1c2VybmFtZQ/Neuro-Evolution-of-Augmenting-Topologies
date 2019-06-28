@@ -67,7 +67,7 @@ for x in range(0, width):
     for y in range(0, height):
         inp1 = (x / width)
         inp2 = (y / height)
-        data[y, x] = (network.feedForward([inp2, inp1, 1])[0] + 1) / 2 * 255
+        data[y, x] = (network.feedForward([inp2, inp1, 1])[0]) * 255
 
 
 img = Image.fromarray(data)
