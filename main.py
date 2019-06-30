@@ -34,9 +34,9 @@ node1 = genome.NodeGene(0, random.randint(0, maxActivations - 1))
 node2 = genome.NodeGene(0, random.randint(0, maxActivations - 1))
 node3 = genome.NodeGene(2, random.randint(0, maxActivations - 1))
 
-con1 = genome.ConnectionGene(0, 3, random.uniform(-4, 4))
-con2 = genome.ConnectionGene(1, 3, random.uniform(-4, 4))
-con3 = genome.ConnectionGene(2, 3, random.uniform(-4, 4))
+# con1 = genome.ConnectionGene(0, 3, random.uniform(-4, 4))
+# con2 = genome.ConnectionGene(1, 3, random.uniform(-4, 4))
+# con3 = genome.ConnectionGene(2, 3, random.uniform(-4, 4))
 
 newGen1 = genome.Genome()
 

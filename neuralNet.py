@@ -55,7 +55,7 @@ def cosineBounded(val):
     return (math.cos(val) + 1) / 2
 
 
-activationList = [sigmoidBounded, sineBounded, linearBounded, step, gaussianFlatter]
+activationList = [gaussian, step]
 
 # //////////////////////////////////////////////////////////////////////////////////
 
