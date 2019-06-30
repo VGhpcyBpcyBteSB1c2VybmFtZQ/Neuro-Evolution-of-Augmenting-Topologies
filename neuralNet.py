@@ -78,7 +78,8 @@ class NeuralNetwork:
         # storing sorted keys for connections for later use
         self.__sortedKeys = []
         for member in self.__connDict.values():
-            self.__sortedKeys.append(member)
+            if (member.isExpressed()):               # add only the expressed connections
+                self.__sortedKeys.append(member)
         self.__sortedKeys.sort(key=self.__sortKey)
         for i in range(0, len(self.__sortedKeys)):
             self.__sortedKeys[i] = str(self.__sortedKeys[i].getInput()) + "_" + str(self.__sortedKeys[i].getOutput())
@@ -109,9 +110,6 @@ class NeuralNetwork:
 
         # start the feed forward
         for key in self.__sortedKeys:
-            # skip if the connection gene is not expressed
-            if (not self.__connDict[key].isExpressed()):
-                continue
             inp = self.__connDict[key].getInput()
             out = self.__connDict[key].getOutput()
             # apply the activation on the incoming value only if it is not an input node
