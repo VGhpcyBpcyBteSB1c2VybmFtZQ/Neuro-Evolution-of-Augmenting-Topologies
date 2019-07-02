@@ -60,7 +60,7 @@ inp1 = np.arange(dimension).reshape((1, dimension)).repeat(dimension, axis=0) / 
 inp2 = np.transpose(inp1)
 inp3 = np.ones((dimension, dimension))
 
-data = (network.feedForward([inp2, inp1, inp3])[0]).astype(dtype=np.uint8) * 255
+data = (network.feedForward([inp2, inp1, inp3])[0] * 255).astype(dtype=np.uint8)
 
 
 img = Image.fromarray(data)
