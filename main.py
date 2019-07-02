@@ -3,7 +3,7 @@ import neat
 import random
 import os
 from PIL import Image
-import numpy
+import numpy as np
 import neuralNet
 
 maxActivations = len(neuralNet.activationList)
@@ -11,22 +11,15 @@ maxActivations = len(neuralNet.activationList)
 
 def myEval(network):
 
-    ans1 = network.feedForward([0, 0, 1])[0]
-    ans2 = network.feedForward([0, 1, 1])[0]
-    ans3 = network.feedForward([1, 0, 1])[0]
-    ans4 = network.feedForward([1, 1, 1])[0]
+    inp1 = np.array([0, 0, 1, 1])
+    inp2 = np.array([0, 1, 0, 1])
+    inp3 = np.array([1, 1, 1, 1])
 
-    e1 = abs(ans1 - (0))
-    e2 = abs(ans2 - 1.0)
-    e3 = abs(ans3 - 1.0)
-    e4 = abs(ans4 - (0))
+    expected = np.array([0, 1, 1, 0])
 
-    avg_err = (e1 + e2 + e3 + e4)
+    result = np.sum(np.absolute(network.feedForward([inp1, inp2, inp3])[0] - expected))
 
-    if (ans1 < 0.5 and ans2 >= 0.5 and ans3 >= 0.5 and ans4 < 0.5 and False):
-        return 100
-    else:
-        return (4 - avg_err)
+    return (4 - result)
 
 
 node0 = genome.NodeGene(0, random.randint(0, maxActivations - 1))
@@ -48,26 +41,26 @@ newGen1.addNodeGene(node3)
 # newGen1.addConnectionGene(con2, "1_3")
 # newGen1.addConnectionGene(con3, "2_3")
 
-
 Algo = neat.NEAT(newGen1, 150)
 network = Algo.evaluate(myEval, 4)
-for i in range(0, 1):
-    print("\n0, 0 =", network.feedForward([0, 0, 1])[0])
-    print("0, 1 =", network.feedForward([0, 1, 1])[0])
-    print("1, 0 =", network.feedForward([1, 0, 1])[0])
-    print("1, 1 =", network.feedForward([1, 1, 1])[0])
+
+inp1 = np.array([0, 0, 1, 1])
+inp2 = np.array([0, 1, 0, 1])
+inp3 = np.array([1, 1, 1, 1])
+
+result = network.feedForward([inp1, inp2, inp3])[0].reshape((4, 1))
+print("\n")
+print(result)
 network.printNetwork()
 print("\nDone")
 
-width = 256
-height = 256
+dimension = 256
 
-data = numpy.zeros((height, width), dtype=numpy.uint8)
-for x in range(0, width):
-    for y in range(0, height):
-        inp1 = (x / width)
-        inp2 = (y / height)
-        data[y, x] = (network.feedForward([inp2, inp1, 1])[0]) * 255
+inp1 = np.arange(dimension).reshape((1, dimension)).repeat(dimension, axis=0) / dimension
+inp2 = np.transpose(inp1)
+inp3 = np.ones((dimension, dimension))
+
+data = (network.feedForward([inp2, inp1, inp3])[0]).astype(dtype=np.uint8) * 255
 
 
 img = Image.fromarray(data)

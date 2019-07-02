@@ -1,6 +1,6 @@
 import math
 import sys
-
+import numpy as np
 
 # /////////////////////// ACTIVATION FUNCTIONS FOR CPPN ////////////////////////////
 
@@ -27,16 +27,11 @@ def linearBounded(val):
 
 
 def step(val):
-    if (val > 0):
-        return 1
-    elif (val < 0):
-        return 0
-    else:
-        return val
+    return np.greater(val, 0).astype(dtype=np.int)
 
 
 def gaussian(val):
-    return (math.exp(-(val * val) / (2 * 0.3 * 0.3)))
+    return (np.exp(-(val ** 2) / (2 * 0.3 * 0.3)))
 
 
 def gaussianFlatter(val):
@@ -104,7 +99,11 @@ class NeuralNetwork:
 
     def feedForward(self, inputs):
         # put the input values into the corresponding nodes
-        nodesResults = [0] * self.__totalNodes
+        nodesResults = []
+
+        for i in range(0, self.__totalNodes):
+            nodesResults.append(np.zeros(inputs[0].shape))
+
         for i in range(0, len(inputs)):
             nodesResults[i] = inputs[i]
 
