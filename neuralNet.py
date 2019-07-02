@@ -98,12 +98,12 @@ class NeuralNetwork:
             sys.exit("Activation id out of range\n")
 
     def feedForward(self, inputs):
-        # put the input values into the corresponding nodes
         nodesResults = []
 
         for i in range(0, self.__totalNodes):
             nodesResults.append(np.zeros(inputs[0].shape))
 
+        # put the input values into the corresponding nodes
         for i in range(0, len(inputs)):
             nodesResults[i] = inputs[i]
 
